@@ -683,7 +683,7 @@ if __name__ == "__main__":
     m.o = aml.Objective(expr=m.x[1]**4 - 3*m.x[1]*m.x[2]**3 + m.x[3]**2 - 8.0)
     m.x[1].setlb(0.0)
     m.x[2].setlb(0.0)
-
+    #m.write('simple_nlp.nl', 'nl')
     solver = aml.SolverFactory('ipopt')
     #solver.solve(m, tee=True)
     #m.x.pprint()

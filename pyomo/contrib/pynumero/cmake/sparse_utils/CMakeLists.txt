@@ -1,2 +1,2 @@
-ADD_LIBRARY( pynumero_SPARSE MODULE src/SparseUtils.cpp)
+ADD_LIBRARY( pynumero_SPARSE SHARED src/SparseUtils.cpp)
 

@@ -402,7 +402,8 @@ FILE* AmplInterfaceStr::open_nl(ASL_pfgh *asl, char* stub)
    // Ignore the stub and use the cached NL file content
    #if defined(__APPLE__) && defined(__MACH__)
    FILE* nl = fmemopen(this->nl_content, this->nl_size, "rb");
-   return jac0dim_FILE(nl);
+   //return jac0dim_FILE(nl);
+   return NULL;
    #elif defined(_WIN32)
    return NULL;
    #else

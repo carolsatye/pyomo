@@ -13,7 +13,7 @@ class SparseLibInterface(object):
         if os.name in ['nt', 'dos']:
             fname = 'lib/Windows/libpynumero_SPARSE.dll'
         elif sys.platform in ['darwin']:
-            fname = 'lib/Darwin/libpynumero_SPARSE.so'
+            fname = 'lib/Darwin/libpynumero_SPARSE.dylib'
         else:
             fname = 'lib/Linux/libpynumero_SPARSE.so'
         self.libname = resource_filename(__name__, fname)

@@ -14,7 +14,7 @@ class MA27_LinearSolver(object):
     if os.name in ['nt', 'dos']:
         libname = 'lib/Windows/libpynumero_HSL.dll'
     elif sys.platform in ['darwin']:
-        libname = 'lib/Darwin/libpynumero_HSL.so'
+        libname = 'lib/Darwin/libpynumero_HSL.dylib'
     else:
         libname = 'lib/Linux/libpynumero_HSL.so'
     libname = resource_filename(__name__, libname)

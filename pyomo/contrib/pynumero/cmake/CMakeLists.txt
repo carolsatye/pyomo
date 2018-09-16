@@ -78,4 +78,4 @@ if(${BUILD_HSL})
 add_subdirectory(hsl_interface)
 endif()
 
-
+add_subdirectory(tests)

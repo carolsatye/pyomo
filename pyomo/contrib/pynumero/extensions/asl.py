@@ -6,14 +6,12 @@ import ctypes
 import sys
 import os
 
-#TODO: ask about assertions
-#TODO: ask about freeing memory
 
 class AmplInterface(object):
     if os.name in ['nt', 'dos']:
         libname = 'lib/Windows/libpynumero_ASL.dll'
     elif sys.platform in ['darwin']:
-        libname = 'lib/Darwin/libpynumero_ASL.so'
+        libname = 'lib/Darwin/libpynumero_ASL.dylib'
     else:
         libname = 'lib/Linux/libpynumero_ASL.so'
     libname = resource_filename(__name__, libname)
@@ -24,13 +22,15 @@ class AmplInterface(object):
 
     def __init__(self, filename=None, nl_buffer=None):
 
-        #TODO: check for 32 or 64 bit and raise error if not supported
+        #TODO: check for 32 or 64 bit and raise error if not supported?
 
         if not AmplInterface.available():
             raise RuntimeError(
                 "ASL interface is not supported on this platform (%s)"
                 % (os.name,) )
 
+        if nl_buffer is not None:
+            raise NotImplementedError("AmplInterface only supported form NL-file for now")
 
         self.ASLib = ctypes.cdll.LoadLibrary(AmplInterface.libname)
 
