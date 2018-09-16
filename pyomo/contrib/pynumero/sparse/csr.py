@@ -28,7 +28,29 @@ __all__ = ['CSRMatrix', 'CSRSymMatrix']
 
 
 class CSRMatrix(SparseBase, scipy_csr_matrix):
+    """
+        Compressed Sparse Row matrix
 
+        | This can be instantiated in several ways
+        |     CSRMatrix(D)
+        |         with a dense matrix D
+        |     CSRMatrix(S)
+        |         with another sparse matrix S (equivalent to S.tocoo())
+        |     CSRMatrix((M, N), [dtype])
+        |         to construct an empty matrix with shape (M, N) dtype is optional, defaulting to dtype=d.
+        |     CSRMatrix((data, (i, j)), [shape=(M, N)])
+        |         to construct from three arrays:
+        |             data[:] the entries of the matrix, in any order
+        |             i[:] the row indices of the matrix entries
+        |             j[:] the column indices of the matrix entries
+        |         Where A[i[k], j[k]] = data[k]. When shape is not specified, it is inferred from the index arrays
+        |     CSRMatrix((data, indices, indptr), [shape=(M, N)])
+        |         to construct from three arrays:
+        |             is the standard CSR representation where the column indices for column i are stored in
+        |             indices[indptr[i]:indptr[i+1]] and their corresponding values are stored in
+        |             data[indptr[i]:indptr[i+1]]. If the shape parameter is not supplied, the matrix dimensions are inferred from
+        |             the index arrays.
+    """
     def __init__(self, arg1, shape=None, dtype=None, copy=False, **kwargs):
 
         # include upper triangular if arg1 is symmetric

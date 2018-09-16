@@ -1,7 +1,7 @@
-pynumero.sparse.coo module
+pynumero.sparse.BlockMatrix 
 =====================================
 
-.. automodule:: pynumero.sparse.coo
+.. autoclass:: pyomo.contrib.pynumero.sparse.block_matrix.BlockMatrix
     :members:
     :inherited-members:
     :no-undoc-members:

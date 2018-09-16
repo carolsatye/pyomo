@@ -119,16 +119,13 @@ class TestBlockVector(unittest.TestCase):
     def test_shape(self):
         size = sum(self.list_sizes_ones)
         self.assertEqual(self.ones.shape, (size,))
-        self.assertRaises(RuntimeError, setattr, self.ones, 'shape', 5)
 
     def test_bshape(self):
         self.assertEqual(self.ones.bshape, (3,))
-        self.assertRaises(RuntimeError, setattr, self.ones, 'bshape', 5)
 
     def test_size(self):
         size = sum(self.list_sizes_ones)
         self.assertEqual(self.ones.size, size)
-        self.assertRaises(RuntimeError, setattr, self.ones, 'size', 5)
 
     def test_norm(self):
         v = self.ones

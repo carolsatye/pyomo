@@ -43,21 +43,20 @@ class COOMatrix(SparseBase, scipy_coo_matrix):
     """
     A sparse matrix in COOrdinate format.
 
-    Also known as the  ijv or triplet format.
-
-    This can be instantiated in several ways:
-    COOMatrix(D)
-    with a dense matrix D
-    COOMatrix(S)
-    with another sparse matrix S (equivalent to S.tocoo())
-    COOMatrix((M, N), [dtype])
-    to construct an empty matrix with shape (M, N) dtype is optional, defaulting to dtype=d.
-    COOMatrix((data, (i, j)), [shape=(M, N)])
-    to construct from three arrays:
-    data[:] the entries of the matrix, in any order
-    i[:] the row indices of the matrix entries
-    j[:] the column indices of the matrix entries
-    Where A[i[k], j[k]] = data[k]. When shape is not specified, it is inferred from the index arrays
+    | Also known as the ijv or triplet format.
+    | This can be instantiated in several ways
+    |     COOMatrix(D)
+    |         with a dense matrix D
+    |     COOMatrix(S)
+    |         with another sparse matrix S (equivalent to S.tocoo())
+    |     COOMatrix((M, N), [dtype])
+    |         to construct an empty matrix with shape (M, N) dtype is optional, defaulting to dtype=d.
+    |     COOMatrix((data, (i, j)), [shape=(M, N)])
+    |         to construct from three arrays:
+    |             data[:] the entries of the matrix, in any order
+    |             i[:] the row indices of the matrix entries
+    |             j[:] the column indices of the matrix entries
+    |         Where A[i[k], j[k]] = data[k]. When shape is not specified, it is inferred from the index arrays
     """
     def __init__(self, arg1, shape=None, dtype=None, copy=False, **kwargs):
 
@@ -244,21 +243,20 @@ class COOSymMatrix(COOMatrix):
     """
     A symmetric sparse matrix in COOrdinate format.
 
-    Also known as the ijv or triplet format.
-
-    This can be instantiated in several ways:
-    COOSymMatrix(D)
-    with a dense matrix D
-    COOSymMatrix(S)
-    with another sparse matrix S (equivalent to S.tocoo())
-    COOSymMatrix((M, N), [dtype])
-    to construct an empty matrix with shape (M, N) dtype is optional, defaulting to dtype=d.
-    COOSymMatrix((data, (i, j)), [shape=(M, N)])
-    to construct from three arrays:
-    data[:] the entries of the matrix, in any order
-    i[:] the row indices of the matrix entries
-    j[:] the column indices of the matrix entries
-    Where A[i[k], j[k]] = data[k]. When shape is not specified, it is inferred from the index arrays
+    | Also known as the ijv or triplet format.
+    | This can be instantiated in several ways
+    |     COOSymMatrix(D)
+    |         with a dense matrix D
+    |     COOSymMatrix(S)
+    |         with another sparse matrix S (equivalent to S.tocoo())
+    |     COOSymMatrix((M, N), [dtype])
+    |         to construct an empty matrix with shape (M, N) dtype is optional, defaulting to dtype=d.
+    |     COOSymMatrix((data, (i, j)), [shape=(M, N)])
+    |         to construct from three arrays:
+    |             data[:] the entries of the matrix, in any order
+    |             i[:] the row indices of the matrix entries
+    |             j[:] the column indices of the matrix entries
+    |         Where A[i[k], j[k]] = data[k]. When shape is not specified, it is inferred from the index arrays
     """
     def __init__(self, arg1, shape=None, dtype=None, copy=False, **kwargs):
 
@@ -600,6 +598,16 @@ class EmptyMatrix(COOMatrix):
 
     def __init__(self, nrows, ncols):
 
+        """
+
+        Parameters
+        ----------
+        nrows : int
+            Number of rows of sparse matrix
+        ncol : int
+            Number of columns of sparse matrix
+        """
+
         data = np.zeros(0)
         irows = np.zeros(0)
         jcols = np.zeros(0)
@@ -643,6 +651,14 @@ class EmptyMatrix(COOMatrix):
 class IdentityMatrix(COOSymMatrix):
 
     def __init__(self, nrowcols):
+        """
+
+        Parameters
+        ----------
+        nrowcols : int
+            Number of rows/columns of sparse identity matrix
+        """
+
         data = np.ones(nrowcols, dtype=np.double)
         irows = np.arange(0, nrowcols)
         jcols = np.arange(0, nrowcols)
@@ -667,6 +683,13 @@ class IdentityMatrix(COOSymMatrix):
 class DiagonalMatrix(COOSymMatrix):
 
     def __init__(self, values, eliminate_zeros=False):
+        """
+
+        Parameters
+        ----------
+        values : array-like
+            vector with diagonal values
+        """
         data = np.array(values, dtype=np.double)
         nrowcols = len(data)
         if eliminate_zeros:

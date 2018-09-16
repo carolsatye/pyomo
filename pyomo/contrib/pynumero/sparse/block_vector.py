@@ -54,87 +54,58 @@ class BlockVector(object):
         else:
             raise RuntimeError("BlockVector constructor takes an integer or a list of np.ndarrays")
 
-
     @property
     def nblocks(self):
         """
-        Return the number of blocks.
+        Returns the number of blocks.
         """
         return self._nblocks
-
-    @nblocks.setter
-    def nblocks(self, new_size):
-        """
-        Prevent changing number of blocks
-        """
-        raise RuntimeError('Change of dimensions not allowed')
 
     @property
     def bshape(self):
         """
-        Return the number of blocks.
+        Returns the number of blocks.
         """
         return self.nblocks,
-
-    @bshape.setter
-    def bshape(self, value):
-        """
-        Prevent changing bshape
-        """
-        raise RuntimeError('Change of dimensions not allowed')
 
     @property
     def shape(self):
         """
-        Return total number of elements in the block vector
+        Returns total number of elements in the block vector
         """
         return np.sum(self._brow_lengths),
-
-    @shape.setter
-    def shape(self, value):
-        """
-        Prevent changing the shape of the block vector explicitly
-        """
-        raise RuntimeError('Change of dimensions not allowed')
 
     @property
     def size(self):
         """
-        Return total number of elements in the block vector
+        Returns total number of elements in the block vector
         """
         return np.sum(self._brow_lengths)
-
-    @size.setter
-    def size(self, value):
-        """
-        Prevent changing the size of the block vector explicitly
-        """
-        raise RuntimeError('Change of dimensions not allowed')
 
     @property
     def ndim(self):
         """
-        Return dimension of the block vector
+        Returns dimension of the block vector
         """
         return 1
 
     def block_sizes(self):
         """
-        Return array with sizes of individual blocks
+        Returns array with sizes of individual blocks
         """
         return np.copy(self._brow_lengths)
 
     def dot(self, other):
         """
-        Return dot product
+        Returns dot product
 
         Parameters
         ----------
-        other : 1d-array of BlockVector
+        other : ndarray or BlockVector
 
         Returns
         -------
-        floating point value result of the dot product operation
+        float
 
         """
         self._check_mask()
@@ -149,47 +120,51 @@ class BlockVector(object):
 
     def sum(self):
         """
-        Return the sum of all entries in the block vector
+        Returns the sum of all entries in the block vector
         """
         self._check_mask()
         return sum(self[i].sum() for i in range(self.nblocks))
 
     def max(self):
         """
-        Return the largest value stored in the vector
+        Returns the largest value stored in the vector
         """
         self._check_mask()
         return np.array([self[i].max() for i in range(self.nblocks)]).max()
 
     def min(self):
         """
-        Return the smallest value stored in the vector
+        Returns the smallest value stored in the vector
         """
         self._check_mask()
         return np.array([self[i].min() for i in range(self.nblocks)]).min()
 
     def mean(self):
         """
-        Return the average of all entries in the vector
+        Returns the average of all entries in the vector
         """
         self._check_mask()
         return sum(self[i].mean() for i in range(self.nblocks))/self.nblocks
 
     def prod(self):
         """
-        Return the product of all entries in the vector
+        Returns the product of all entries in the vector
         """
         self._check_mask()
         return np.array([self[i].prod() for i in range(self.nblocks)]).prod()
 
     def fill(self, value):
         """
-        Fill the array with a scalar value.
+        Fills the array with a scalar value.
 
         Parameters
         ----------
         value : scalar
-        All elements in the vector will be assigned this value
+            All elements in the vector will be assigned this value
+
+        Returns
+        -------
+        None
 
         """
         for i in range(self.nblocks):
@@ -198,33 +173,28 @@ class BlockVector(object):
 
     def tolist(self):
         """
-        Return the array as a list.
-
-        Parameters
-        ----------
-        None
+        Return the vector as a list.
 
         Returns
         -------
-        copy of the array data as a Python list. Data items are converted to the nearest compatible Python type.
+        list
 
         """
         return self.flatten().tolist()
 
     def flatten(self, order='C'):
         """
-        Return a copy of the array collapsed into one dimension.
+        Returns a copy of the array collapsed into one dimension.
         Parameters
         ----------
         order: : {C, F, A, K}, optional
-
-        C means to flatten in row-major (C-style) order. F means to flatten in column-major (Fortran- style)
-        order. A means to flatten in column-major order if a is Fortran contiguous in memory, row-major
-        order otherwise. K means to flatten a in the order the elements occur in memory. The default is C.
+            C means to flatten in row-major (C-style) order. F means to flatten in column-major (Fortran- style)
+            order. A means to flatten in column-major order if a is Fortran contiguous in memory, row-major
+            order otherwise. K means to flatten a in the order the elements occur in memory. The default is C.
 
         Returns
         -------
-        A copy of the input array, flattened to one dimension.
+        ndarray
 
         """
         all_blocks = tuple(v.flatten(order=order) for v in self)
@@ -233,11 +203,14 @@ class BlockVector(object):
     # TODO: this functions need to be implemented more efficiently
     ##############################################################
     def norm(self, ord=None, axis=None, keepdims=False):
+        """
+        Returns norm of block vector
+        """
         return np.linalg.norm(self.flatten(), ord=ord, axis=axis, keepdims=keepdims)
 
     def argmax(self, axis=None, out=None):
         """
-        Return the index of the largest element.
+        Returns the index of the largest element.
         """
         msg = 'Operation not allowed with None blocks. Specify all blocks'
         msg += '\n{}'.format(self.__str__())
@@ -246,7 +219,7 @@ class BlockVector(object):
 
     def argmin(self, axis=None, out=None):
         """
-        Return the index of the smallest element.
+        Returns the index of the smallest element.
         """
         msg = 'Operation not allowed with None blocks. Specify all blocks'
         msg += '\n{}'.format(self.__str__())
@@ -255,7 +228,7 @@ class BlockVector(object):
 
     def cumprod(self, axis=None, dtype=None, out=None):
         """
-        Return the cumulative product of the elements along the given axis.
+        Returns the cumulative product of the elements along the given axis.
         """
         msg = 'Operation not allowed with None blocks. Specify all blocks'
         msg += '\n{}'.format(self.__str__())
@@ -264,7 +237,7 @@ class BlockVector(object):
 
     def cumsum(self, axis=None, dtype=None, out=None):
         """
-        Return the cumulative sum of the elements along the given axis.
+        Returns the cumulative sum of the elements along the given axis.
         """
         msg = 'Operation not allowed with None blocks. Specify all blocks'
         msg += '\n{}'.format(self.__str__())
@@ -275,11 +248,12 @@ class BlockVector(object):
 
     def scale(self, value):
         """
-        scale all entries in the vector
+        Scales all entries in the vector
+
         Parameters
         ----------
         value: scalar
-        all elements in vector are multiply by this value
+            all elements in vector are multiply by this value
 
         Returns
         -------
@@ -296,9 +270,9 @@ class BlockVector(object):
         Parameters
         ----------
         value: scalar (optional)
-        all entries of the cloned vector are set to this value
+            all entries of the cloned vector are set to this value
         copy: bool (optinal)
-        if set to true makes a deepcopy of each block in this vector. default False
+            if set to true makes a deepcopy of each block in this vector. default False
 
         Returns
         -------
@@ -318,11 +292,11 @@ class BlockVector(object):
 
     def copyfrom(self, other):
         """
-        Copy entries of other vector into this vector
+        Copies entries of other vector into this vector
 
         Parameters
         ----------
-        other: BlockVector or 1a-array
+        other: BlockVector or ndarray
 
         Returns
         -------
@@ -355,11 +329,11 @@ class BlockVector(object):
 
     def copyto(self, other):
         """
-        Copy entries of this vector into other
+        Copies entries of this vector into other
 
         Parameters
         ----------
-        other: BlockVector or 1a-array
+        other: BlockVector or ndarray
 
         Returns
         -------
@@ -401,11 +375,12 @@ class BlockVector(object):
 
     def set_blocks(self, blocks):
         """
-        Assign vectors in blocks
+        Assigns vectors in blocks
 
         Parameters
         ----------
-        blocks: list of vectors
+        blocks: list
+            list of vectors
 
         Returns
         -------

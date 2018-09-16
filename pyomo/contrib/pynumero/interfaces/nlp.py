@@ -492,13 +492,13 @@ class NLP(object):
 
     def x_init(self):
         """
-        Return initial guess of primal variables in a 1d-array.
+        Returns initial guess of primal variables in a 1d-array.
         """
         return self._init_x.copy()
 
     def y_init(self):
         """
-        Return initial guess of dual variables in a 1d-array.
+        Returns initial guess of dual variables in a 1d-array.
         """
         return self._init_y.copy()
 
@@ -682,7 +682,7 @@ class NLP(object):
 
     @abc.abstractmethod
     def evaluate_g(self, x, out=None, **kwargs):
-        """Return general inequality constraints evaluated at x
+        """Returns general inequality constraints evaluated at x
 
         Parameters
         ----------

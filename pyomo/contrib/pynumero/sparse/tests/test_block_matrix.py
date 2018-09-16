@@ -43,11 +43,11 @@ class TestBlockMatrix(unittest.TestCase):
         self.assertEqual(self.basic_m.name, 'hola')
 
     def test_bshape(self):
-        self.assertRaises(RuntimeError, setattr, self.basic_m, 'bshape', (2, 2))
+        self.assertEqual(self.basic_m.bshape, (2, 2))
 
     def test_shape(self):
         shape = (self.block_m.shape[0]*2, self.block_m.shape[1]*2)
-        self.assertRaises(RuntimeError, setattr, self.basic_m, 'shape', shape)
+        self.assertEqual(self.basic_m.shape, shape)
 
     def test_tocoo(self):
 

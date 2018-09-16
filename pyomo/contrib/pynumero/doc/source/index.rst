@@ -1,4 +1,4 @@
-PyNumero 0.0 documentation
+PyNumero Documentation
 =========================
 
 .. toctree::
@@ -6,6 +6,7 @@ PyNumero 0.0 documentation
 
    overview
    installation
+   examples
    API documentation <apidoc/pynumero>
    license
    developers
@@ -22,7 +23,7 @@ IDEAS Funding
 
 
 Indices and tables
-==================
+====================
 
 * :ref:`genindex`
 * :ref:`modindex`

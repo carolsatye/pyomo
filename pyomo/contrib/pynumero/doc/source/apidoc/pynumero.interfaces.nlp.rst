@@ -1,8 +1,7 @@
-pynumero.interfaces.nlp module
-=====================================
+pynumero.interfaces.nlp.NLP Base Class
+===============================================
 
-.. automodule:: pynumero.interfaces.nlp
-    :members:
-    :inherited-members:
-    :no-undoc-members:
-    :show-inheritance:
+.. autoclass:: pyomo.contrib.pynumero.interfaces.nlp.NLP
+   :members:
+      
+   

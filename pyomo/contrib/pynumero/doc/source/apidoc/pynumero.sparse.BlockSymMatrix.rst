@@ -1,7 +1,7 @@
-pynumero.sparse.block_matrix module
+pynumero.sparse.BlockSymMatrix 
 =====================================
 
-.. automodule:: pynumero.sparse.block_matrix
+.. autoclass:: pyomo.contrib.pynumero.sparse.block_matrix.BlockSymMatrix
     :members:
     :inherited-members:
     :no-undoc-members:

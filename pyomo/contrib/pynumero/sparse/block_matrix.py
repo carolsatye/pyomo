@@ -61,91 +61,63 @@ class BlockMatrix(SparseBase):
     @property
     def bshape(self):
         """
-        Return the block-shape of the matrix
+        Returns the block-shape of the matrix
         """
         return self._bshape
-
-    @bshape.setter
-    def bshape(self, new_shape):
-        """
-        Prevent changing bshape
-        """
-        raise RuntimeError('Change of dimensions not allowed')
 
     @property
     def shape(self):
         """
-        Return tuple with total number of rows and columns
+        Returns tuple with total number of rows and columns
         """
         return np.sum(self._brow_lengths), np.sum(self._bcol_lengths)
-
-    @shape.setter
-    def shape(self, new_shape):
-        """
-        Prevent changing the shape of the block matrix explicitly
-        """
-        raise RuntimeError('Change of dimensions not allowed')
 
     @property
     def nnz(self):
         """
-        Return total number of nonzero values in the matrix
+        Returns total number of nonzero values in the matrix
         """
         return sum(blk.nnz for blk in self._blocks[self._block_mask])
 
     @property
     def dtype(self):
         """
-        Return data type of the matrix.
+        Returns data type of the matrix.
         """
         # ToDo: decide if this is the right way of doing this
         all_dtypes = [blk.dtype for blk in self._blocks[self._block_mask]]
         dtype = upcast(*all_dtypes) if all_dtypes else None
         return dtype
 
-    @dtype.setter
-    def dtype(self, new_type):
-        """
-        Prevent changing the dtype of the block matrix explicitly
-        """
-        raise NotImplementedError
-
-    @nnz.setter
-    def nnz(self, new_nnz):
-        """
-        Prevent changing the number of nonzeros of the block matrix explicitly
-        """
-        raise RuntimeError('Change of nnz not allowed')
-
     def row_block_sizes(self):
         """
-        Return row-block sizes
+        Returns row-block sizes
 
         Returns
         -------
-        1d-array with the size of the row-blocks
+        ndarray
 
         """
         return np.copy(self._brow_lengths)
 
     def col_block_sizes(self):
         """
-        Return col-block sizes
+        Returns col-block sizes
 
         Returns
         -------
-        1d-array with the size of the row-blocks
+        narray
 
         """
         return np.copy(self._bcol_lengths)
 
     def block_shapes(self):
         """
-        Return shapes of blocks in BlockMatrix
+        Returns shapes of blocks in BlockMatrix
 
         Returns
         -------
-        list of shapes of blocks
+        list
         """
         bm, bn =self.bshape
         sizes = [list() for i in range(bm)]
@@ -164,12 +136,12 @@ class BlockMatrix(SparseBase):
 
     def reset_brow(self, idx):
         """
-        Reset all blocks in selected row to None
+        Resets all blocks in selected row to None
 
         Parameters
         ----------
         idx: integer
-        row index to be reseted
+            row index to be reseted
 
         Returns
         -------
@@ -183,12 +155,12 @@ class BlockMatrix(SparseBase):
 
     def reset_bcol(self, jdx):
         """
-        Reset all blocks in selected column to None
+        Resets all blocks in selected column to None
 
         Parameters
         ----------
         idx: integer
-        column index to be reseted
+            column index to be reseted
 
         Returns
         -------
@@ -202,7 +174,7 @@ class BlockMatrix(SparseBase):
 
     def getallnnz(self):
         """
-        Return total number of nonzero values in the matrix
+        Returns total number of nonzero values in the matrix
         """
         nonzeros = 0
         ii, jj = np.nonzero(self._block_mask)
@@ -218,11 +190,11 @@ class BlockMatrix(SparseBase):
 
     def coo_data(self):
         """
-        Return data values of matrix in coo format
+        Returns data values of matrix in coo format
 
         Returns
         -------
-        1d-array with values of all entries in the matrix
+        ndarray with values of all entries in the matrix
 
         """
         self._check_mask()
@@ -245,7 +217,7 @@ class BlockMatrix(SparseBase):
 
     def tocoo(self):
         """
-        Convert this matrix to COOMatrix format.
+        Converts this matrix to COOMatrix format.
 
         Returns
         -------
@@ -288,7 +260,7 @@ class BlockMatrix(SparseBase):
 
     def tocsr(self):
         """
-        Convert this matrix to CSRMatrix format.
+        Converts this matrix to CSRMatrix format.
 
         Returns
         -------
@@ -299,7 +271,7 @@ class BlockMatrix(SparseBase):
 
     def tocsc(self):
         """
-        Convert this matrix to CSCMatrix format.
+        Converts this matrix to CSCMatrix format.
 
         Returns
         -------
@@ -310,31 +282,32 @@ class BlockMatrix(SparseBase):
 
     def toarray(self):
         """
-        Return a dense ndarray representation of this matrix.
+        Returns a dense ndarray representation of this matrix.
 
         Returns
         -------
         arr : ndarray, 2-dimensional
-        An array with the same shape and containing the same data
-        represented by the block matrix.
+            An array with the same shape and containing the same data
+            represented by the block matrix.
 
         """
         return self.tocoo().toarray()
 
     def todense(self):
         """
-        Return a dense matrix representation of this matrix.
+        Returns a dense matrix representation of this matrix.
 
         Returns
         -------
         arr : ndarray, 2-dimensional
-        An array with the same shape and containing the same data
-        represented by the block matrix.
+            An array with the same shape and containing the same data
+            represented by the block matrix.
 
         """
         return np.asmatrix(self.toarray())
 
     def toscipy(self):
+        """Returns scipy coo_matrix"""
         return scipy_coo_matrix(self.tocoo())
 
     def _mul_sparse_matrix(self, other):
@@ -353,10 +326,10 @@ class BlockMatrix(SparseBase):
         Parameters
         ----------
         axes: None, optional
-        This argument is in the signature solely for NumPy compatibility reasons. Do not pass in
-        anything except for the default value.
+            This argument is in the signature solely for NumPy compatibility reasons. Do not pass in
+            anything except for the default value.
         copy: bool, optional
-        Indicates whether or not attributes of self should be copied whenever possible.
+            Indicates whether or not attributes of self should be copied whenever possible.
 
         Returns
         -------
@@ -382,8 +355,10 @@ class BlockMatrix(SparseBase):
 
         Parameters
         ----------
-        idx: block-row index
-        jdx: block-column index
+        idx: int
+            block-row index
+        jdx: int
+            block-column index
 
         Returns
         -------
@@ -754,14 +729,14 @@ class BlockSymMatrix(BlockMatrix):
         Parameters
         ----------
         axes: None, optional
-        This argument is in the signature solely for NumPy compatibility reasons. Do not pass in
-        anything except for the default value.
+            This argument is in the signature solely for NumPy compatibility reasons. Do not pass in
+            anything except for the default value.
         copy: bool, optional
-        Indicates whether or not attributes of self should be copied whenever possible.
+            Indicates whether or not attributes of self should be copied whenever possible.
 
         Returns
         -------
-        BlockSymMatrix with dimensions reversed
+        BlockSymMatrix
 
         """
         if axes is not None:
@@ -797,7 +772,14 @@ class BlockSymMatrix(BlockMatrix):
             raise RuntimeError(msg)
 
     def has_empty_cols(self):
+        """
+        Indicates if the matrix has block-rows that are empty
 
+        Returns
+        -------
+        boolean
+
+        """
         bm, bn = self.bshape
 
         empty_rows = []
@@ -809,7 +791,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def getallnnz(self):
         """
-        Return total number of nonzero values in the matrix
+        Returns total number of nonzero values in the matrix
         """
         nonzeros = 0
         ii, jj = np.nonzero(self._block_mask)
@@ -828,7 +810,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def tofullmatrix(self):
         """
-        Convert this matrix to BlockMatrix format.
+        Converts this matrix to BlockMatrix format.
 
         Returns
         -------
@@ -849,11 +831,11 @@ class BlockSymMatrix(BlockMatrix):
 
     def coo_data(self):
         """
-        Return data values of matrix in coo format. Only lower triangular entries
+        Returns data values of matrix in coo format. Only lower triangular entries
 
         Returns
         -------
-        1d-array with values of lower triangular entries in the matrix
+        ndarray
 
         """
         self._check_mask()
@@ -883,7 +865,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def tocoo(self):
         """
-        Convert this matrix to COOSymMatrix format. Remains symmetric
+        Converts this matrix to COOSymMatrix format. Remains symmetric
 
         Returns
         -------
@@ -927,7 +909,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def tocsr(self):
         """
-        Convert this matrix to CSRSymMatrix format. Remains symmetric
+        Converts this matrix to CSRSymMatrix format. Remains symmetric
 
         Returns
         -------
@@ -938,7 +920,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def tocsc(self):
         """
-        Convert this matrix to CSCSymMatrix format. Remains symmetric
+        Converts this matrix to CSCSymMatrix format. Remains symmetric
 
         Returns
         -------
@@ -949,7 +931,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def tofullcoo(self):
         """
-        Convert this matrix to COOMatrix format.
+        Converts this matrix to COOMatrix format.
 
         Returns
         -------
@@ -960,7 +942,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def tofullcsr(self):
         """
-        Convert this matrix to CSRMatrix format.
+        Converts this matrix to CSRMatrix format.
 
         Returns
         -------
@@ -971,7 +953,7 @@ class BlockSymMatrix(BlockMatrix):
 
     def tofullcsc(self):
         """
-        Convert this matrix to CSCMatrix format.
+        Converts this matrix to CSCMatrix format.
 
         Returns
         -------
@@ -982,31 +964,32 @@ class BlockSymMatrix(BlockMatrix):
 
     def toarray(self):
         """
-        Return a dense ndarray representation of this matrix.
+        Returns a dense ndarray representation of this matrix.
 
         Returns
         -------
         arr : ndarray, 2-dimensional
-        An array with the same shape and containing the same data
-        represented by the block matrix.
+            An array with the same shape and containing the same data
+            represented by the block matrix.
 
         """
         return self.tofullcoo().toarray()
 
     def todense(self):
         """
-        Return a dense ndarray representation of this matrix.
+        Returns a dense ndarray representation of this matrix.
 
         Returns
         -------
         arr : ndarray, 2-dimensional
-        An array with the same shape and containing the same data
-        represented by the block matrix.
+            An array with the same shape and containing the same data
+            represented by the block matrix.
 
         """
         return np.asmatrix(self.toarray())
 
     def toscipy(self):
+        """Return scipy coo_matrix"""
         return scipy_coo_matrix(self.tofullmatrix().tocoo())
 
     def _mul_sparse_matrix(self, other):

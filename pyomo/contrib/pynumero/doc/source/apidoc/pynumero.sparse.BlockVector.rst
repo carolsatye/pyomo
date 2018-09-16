@@ -1,7 +1,7 @@
-pynumero.sparse.block_vector module
+pynumero.sparse.BlockVector
 =====================================
 
-.. automodule:: pynumero.sparse.block_vector
+.. autoclass:: pyomo.contrib.pynumero.sparse.block_vector.BlockVector
     :members:
     :inherited-members:
     :no-undoc-members:

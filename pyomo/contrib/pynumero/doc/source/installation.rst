@@ -51,7 +51,7 @@ includes syntax highlighting, indentation, and function recognition.
 
 Python packages
 ^^^^^^^^^^^^^^^^^
-The following python packages are required for WNTR:
+The following python packages are required for PyNumero:
 
 * Numpy [vanderWalt2011]_: used to support large, multi-dimensional arrays and matrices, 
   http://www.numpy.org/
@@ -69,10 +69,7 @@ Packages can be installed using pip.
 Optional dependencies
 -------------------------
 
-The following python packages are optional for WNTR:
-
-* Numpydoc [vanderWalt2011]_: used to build the user manual,
-  https://github.com/numpy/numpydoc
+The following python packages are optional for PyNumero:
 
 * HSL [HSL2013]_: solvers for Ipopt, http://www.hsl.rl.ac.uk/ipopt/.
 	

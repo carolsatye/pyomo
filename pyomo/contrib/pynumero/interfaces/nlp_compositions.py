@@ -251,7 +251,7 @@ class TwoStageStochasticNLP(NLP):
     @property
     def nblocks(self):
         """
-        Return number of blocks (nlps)
+        Returns number of blocks (nlps)
         """
         return len(self._nlps)
 
@@ -261,8 +261,6 @@ class TwoStageStochasticNLP(NLP):
         Return number of complicated variables
         """
         return self._nz
-
-    # ToDo: add z_init? and allow modifications to it?
 
     def xl(self, condensed=False):
         """
@@ -369,18 +367,19 @@ class TwoStageStochasticNLP(NLP):
         raise NotImplementedError()
 
     def nlps(self):
+        """Creates generator scenario name to nlp """
         for sid, name in enumerate(self._sid_to_sname):
             yield name, self._nlps[sid]
 
     def create_vector_x(self, subset=None):
-        """Return BlockVector of primal variables
+        """Returns ndarray of primal variables
 
         Parameters
         ----------
-        subset : str
-            type of vector. xl returns a vector of
-            variables with lower bounds. xu returns a
-            vector of variables with upper bounds (optional)
+        subset : str, optional
+            determines size of vector.
+            `l`: only primal variables with lower bounds
+            `u`: only primal variables with upper bounds
 
         Returns
         -------
@@ -413,14 +412,16 @@ class TwoStageStochasticNLP(NLP):
             raise RuntimeError('Subset not recognized')
 
     def create_vector_y(self, subset=None):
-        """Return BlockVector of constraints
+        """Return ndarray of vector of constraints
 
         Parameters
         ----------
-        subset : str
-            type of vector. yd returns a vector of
-            inequality constriants. yc returns a
-            vector of equality constraints (optional)
+        subset : str, optional
+            determines size of vector.
+            `c`: only equality constraints
+            `d`: only inequality constraints
+            `dl`: only inequality constraints with lower bound
+            `du`: only inequality constraints with upper bound
 
         Returns
         -------
@@ -439,7 +440,18 @@ class TwoStageStochasticNLP(NLP):
             raise RuntimeError('Subset not recognized')
 
     def objective(self, x, **kwargs):
+        """Returns value of objective function evaluated at x
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+
+        Returns
+        -------
+        float
+
+        """
         if isinstance(x, BlockVector):
             return sum(self._nlps[i].objective(x[i]) for i in range(self.nblocks))
         elif isinstance(x, np.ndarray):
@@ -451,7 +463,21 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("x must be a numpy array or a BlockVector")
 
     def grad_objective(self, x, out=None, **kwargs):
+        """Returns gradient of the objective function evaluated at x
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        out : array_like
+            Output array. Its type is preserved and it
+            must be of the right shape to hold the output.
+
+        Returns
+        -------
+        array_like
+
+        """
         if out is None:
             df = self.create_vector_x()
         else:
@@ -475,7 +501,21 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("x must be a numpy array or a BlockVector")
 
     def evaluate_g(self, x, out=None, **kwargs):
+        """Returns general inequality constraints evaluated at x
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        out : array_like
+            Output array. Its type is preserved and it
+            must be of the right shape to hold the output.
+
+        Returns
+        -------
+        array_like
+
+        """
         if out is None:
             res = self.create_vector_y()
         else:
@@ -512,7 +552,21 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("x must be a numpy array or a BlockVector")
 
     def evaluate_c(self, x, out=None, **kwargs):
+        """Returns the equality constraints evaluated at x
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        out : array_like
+            Output array. Its type is preserved and it
+            must be of the right shape to hold the output.
+
+        Returns
+        -------
+        array_like
+
+        """
         if out is None:
             res = self.create_vector_y(subset='c')
         else:
@@ -548,6 +602,22 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("x must be a numpy array or a BlockVector")
 
     def evaluate_d(self, x, out=None, **kwargs):
+        """Returns the inequality constraints evaluated at x
+
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        out : array_like
+            Output array. Its type is preserved and it
+            must be of the right shape to hold the output.
+
+        Returns
+        -------
+        array_like
+
+        """
+
         if out is None:
             res = self.create_vector_y(subset='d')
         else:
@@ -565,7 +635,20 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("x must be a numpy array or a BlockVector")
 
     def jacobian_g(self, x, out=None, **kwargs):
+        """Returns the Jacobian of the general inequalities evaluated at x
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        out : COOMatrix, optional
+            Output matrix with the structure of the jacobian already defined.
+
+        Returns
+        -------
+        BlockMatrix
+
+        """
         assert x.size == self.nx, "Dimension missmatch"
 
         if out is None:
@@ -614,7 +697,20 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("ToDo")
 
     def jacobian_c(self, x, out=None, **kwargs):
+        """Returns the Jacobian of the equalities evaluated at x
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        out : COOMatrix, optional
+            Output matrix with the structure of the jacobian already defined.
+
+        Returns
+        -------
+        BlockMatrix
+
+        """
         assert x.size == self.nx, "Dimension missmatch"
 
         if out is None:
@@ -663,7 +759,20 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("ToDo")
 
     def jacobian_d(self, x, out=None, **kwargs):
+        """Returns the Jacobian of the inequalities evaluated at x
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        out : COOMatrix, optional
+            Output matrix with the structure of the jacobian already defined.
+
+        Returns
+        -------
+        BlockMatrix
+
+        """
         assert x.size == self.nx, "Dimension missmatch"
 
         if out is None:
@@ -680,7 +789,22 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("ToDo")
 
     def hessian_lag(self, x, y, out=None, **kwargs):
+        """Return the Hessian of the Lagrangian function evaluated at x and y
 
+        Parameters
+        ----------
+        x : array_like
+            Array with values of primal variables.
+        y : array_like
+            Array with values of dual variables.
+        out : SymCOOMatrix
+            Output matrix with the structure of the hessian already defined. Optional
+
+        Returns
+        -------
+        BlockSymMatrix
+
+        """
         assert x.size == self.nx, "Dimension missmatch"
         assert y.size == self.ng, "Dimension missmatch"
 
@@ -703,12 +827,51 @@ class TwoStageStochasticNLP(NLP):
             raise NotImplementedError("ToDo")
 
     def block_id(self, scneario_name):
+        """
+        Returns idx of corresponding nlp for scenario_name
+
+        Parameters
+        ----------
+        scenario_name : str
+            name of scenario
+
+        Returns
+        -------
+        int
+
+        """
         return self._sname_to_sidp[scneario_name]
 
     def block_name(self, bid):
+        """
+        Returns scenario name for given bid index
+
+        Parameters
+        ----------
+        bid : int
+            index of a given scenario
+
+        Returns
+        -------
+        int
+
+        """
         return self._sid_to_sname[bid]
 
     def get_block(self, scneario_name):
+        """
+        Returns nlp corresponding to scenario_name
+
+        Parameters
+        ----------
+        scenario_name : str
+            name of scenario
+
+        Returns
+        -------
+        NLP
+
+        """
         bid = self._sname_to_sid[scneario_name]
         return self._nlps[bid]
 

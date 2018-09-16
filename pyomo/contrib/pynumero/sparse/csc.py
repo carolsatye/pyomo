@@ -27,7 +27,29 @@ __all__ = ['CSCMatrix', 'CSCSymMatrix']
 
 
 class CSCMatrix(SparseBase, scipy_csc_matrix):
+    """
+        Compressed Sparse Column matrix
 
+        | This can be instantiated in several ways
+        |     CSCMatrix(D)
+        |         with a dense matrix D
+        |     CSCMatrix(S)
+        |         with another sparse matrix S (equivalent to S.tocoo())
+        |     CSCMatrix((M, N), [dtype])
+        |         to construct an empty matrix with shape (M, N) dtype is optional, defaulting to dtype=d.
+        |     CSCMatrix((data, (i, j)), [shape=(M, N)])
+        |         to construct from three arrays:
+        |             data[:] the entries of the matrix, in any order
+        |             i[:] the row indices of the matrix entries
+        |             j[:] the column indices of the matrix entries
+        |         Where A[i[k], j[k]] = data[k]. When shape is not specified, it is inferred from the index arrays
+        |     CSCMatrix((data, indices, indptr), [shape=(M, N)])
+        |         to construct from three arrays:
+        |             is the standard CSC representation where the row indices for column i are stored in
+        |             indices[indptr[i]:indptr[i+1]] and their corresponding values are stored in
+        |             data[indptr[i]:indptr[i+1]]. If the shape parameter is not supplied, the matrix dimensions are inferred from
+        |             the index arrays.
+    """
     def __init__(self, arg1, shape=None, dtype=None, copy=False, **kwargs):
 
         # include upper triangular if arg1 is symmetric
