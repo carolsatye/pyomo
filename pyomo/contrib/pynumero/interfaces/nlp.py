@@ -1674,8 +1674,8 @@ class PyomoNLP(AslNLP):
             model.write(filename+'.nl', 'nl', io_options={"symbolic_solver_labels": True})
 
             fname, symbolMap = pyomo.opt.WriterFactory('nl')(model, filename, lambda x:True, {})
-            varToIndex = pyomo.core.kernel.ComponentMap()
-            conToIndex = pyomo.core.kernel.ComponentMap()
+            varToIndex = pyomo.core.kernel.component_map.ComponentMap()
+            conToIndex = pyomo.core.kernel.component_map.ComponentMap()
             for name, obj in six.iteritems(symbolMap.bySymbol):
                 if name[0] == 'v':
                     varToIndex[obj()] = int(name[1:])
