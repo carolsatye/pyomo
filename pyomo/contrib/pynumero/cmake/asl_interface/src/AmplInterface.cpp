@@ -397,6 +397,7 @@ AmplInterfaceStr::AmplInterfaceStr(char* nl, size_t size)
      nl_size(size)
 {}
 
+// THIS METHOD IS DIABLED FOR NOW
 FILE* AmplInterfaceStr::open_nl(ASL_pfgh *asl, char* stub)
 {
    // Ignore the stub and use the cached NL file content
@@ -407,8 +408,9 @@ FILE* AmplInterfaceStr::open_nl(ASL_pfgh *asl, char* stub)
    #elif defined(_WIN32)
    return NULL;
    #else
-   FILE* nl = fmemopen(this->nl_content, this->nl_size, "rb");
-   return jac0dim_FILE(nl);
+   //FILE* nl = fmemopen(this->nl_content, this->nl_size, "rb");
+   //return jac0dim_FILE(nl);
+   return NULL;
    #endif
 
 }
