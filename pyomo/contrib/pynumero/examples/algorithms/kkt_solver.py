@@ -29,6 +29,7 @@ from scipy.sparse.linalg.interface import LinearOperator
 from scipy.sparse.linalg import spsolve, inv, splu, cg
 from scipy.sparse import coo_matrix, identity
 import inspect
+import timeit
 import six
 import abc
 
@@ -56,7 +57,7 @@ class KKTSolver(object):
 
 class FullKKTSolver(KKTSolver):
 
-    def __init__(self, linear_solver, pivotol=1e-8, options=None):
+    def __init__(self, linear_solver, pivotol=1e-8, options=None, **kwargs):
 
         if options is None:
             options = dict()
@@ -93,6 +94,8 @@ class FullKKTSolver(KKTSolver):
         super(FullKKTSolver, self).__init__(lsolver)
         self._inertia_params = InertiaCorrectionParams()
 
+        self._compute_residual = kwargs.pop('compute_residual', False)
+
     def solve(self, kkt, rhs, nlp, *args, **kwargs):
         do_symbolic = kwargs.pop('do_symbolic', True)
         do_numeric = kwargs.pop('do_numeric', True)
@@ -100,6 +103,9 @@ class FullKKTSolver(KKTSolver):
         wr = kwargs.pop('regularize', True)
         max_iter_ref = kwargs.pop('max_iter_ref', 10)
         tol_iter_ref = kwargs.pop('tol_iter_ref', 1e-8)
+        compute_residual = kwargs.pop('compute_residual', self._compute_residual)
+
+        start_time = timeit.default_timer()
 
         # set auxiliary variables
         diagonal = None
@@ -149,7 +155,7 @@ class FullKKTSolver(KKTSolver):
                 #print("WARNING: could not regularized")
                 raise RuntimeError('Could not regularize the problem')
 
-        info = {'status': status, 'delta_reg': val_reg, 'reg_iter': count_iter}
+
 
         # iterative refinement
         if max_iter_ref > 0:
@@ -159,6 +165,21 @@ class FullKKTSolver(KKTSolver):
                                       tol_iter_ref=tol_iter_ref)
         else:
             x = lsolver.do_back_solve(rhs)
+
+        end_time = timeit.default_timer() - start_time
+
+        if compute_residual:
+            resid = np.linalg.norm(kkt.tocsc().dot(x.flatten())-rhs.flatten(), ord=np.inf)
+        else:
+            resid = -1.0
+
+        info = {'status': status,
+                'delta_reg': val_reg,
+                'reg_iter': count_iter,
+                'residual': resid,
+                'time': end_time,
+                'iterations': 1
+                }
 
         return x, info
 

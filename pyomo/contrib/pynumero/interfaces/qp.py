@@ -48,7 +48,7 @@ class EqualityQP(NLP):
 
         assert isinstance(model, EqualityQuadraticModel)
         self._model = model
-        
+
         super(EqualityQP, self).__init__()
 
         # initialize components
@@ -504,3 +504,130 @@ class EqualityQP(NLP):
 
     def report_solver_status(self, status_num, status_msg, x, y):
         raise NotImplementedError('EqualityQP does not support report_solver_status')
+
+    def variable_order(self):
+        return list(np.arange(self.nx))
+
+
+class PositiveEqualityQP(EqualityQP):
+
+    def __init__(self, model, num_bounds=None, **kwargs):
+
+        if num_bounds is None:
+            self._num_bounds = model.hessian.shape[0] # nx
+        else:
+            self._num_bounds = num_bounds
+
+        super(PositiveEqualityQP, self).__init__(model)
+
+        # initialize components
+        self._initialize_nlp_components()
+
+        # make pointer unmutable from outside world
+        self._make_unmutable_caches()
+
+    def _initialize_nlp_components(self, *args, **kwargs):
+
+        model = self._model
+
+        # dimensions
+        self._nx = model.hessian.shape[0]
+        self._ng = model.jacobian.shape[0]
+        self._nnz_jac_g = model.jacobian.nnz
+        self._nnz_jac_c = model.jacobian.nnz
+        self._nnz_jac_d = 0
+        self._nnz_hess_lag = model.hessian.nnz
+
+        # initial point
+        self._init_x = np.zeros(self.nx)
+        self._init_y = np.zeros(self.ng)
+
+        # bounds on x
+        self._upper_x = np.full((self.nx, 1), np.inf)
+        if self._num_bounds == self._nx:
+            self._lower_x = np.zeros(self.nx, dtype=np.float64)
+        else:
+            self._lower_x = np.full((self.nx, 1), -np.inf) # np.zeros(self.nx, dtype=np.float64)
+            for j in range(self._num_bounds):
+                self._lower_x[j] = 0.0
+        self._upper_x = self._upper_x.flatten()
+        self._lower_x = self._lower_x.flatten()
+
+        # bounds on g
+        self._upper_g = np.copy(model.rhs)
+        self._lower_g = np.copy(model.rhs)
+
+        if self._num_bounds == self._nx:
+            self._lower_x_mask = np.ones(self.nx, dtype=bool)
+            self._lower_x_map = np.arange(self.nx)
+        else:
+            self._lower_x_mask = np.zeros(self.nx, dtype=bool)
+            for j in range(self._num_bounds):
+                self._lower_x_mask[j] = True
+            self._lower_x_map = np.arange(self._num_bounds)
+        self._upper_x_mask = np.zeros(self.nx, dtype=bool)
+        self._upper_x_map = np.zeros(0)
+
+        self._c_mask = np.ones(self.ng, dtype=bool)
+        self._c_map = np.arange(self.ng)
+        self._d_mask = np.zeros(self.ng, dtype=bool)
+        self._d_map = np.zeros(0)
+
+        self._lower_g_mask = np.ones(self.ng, dtype=bool)
+        self._lower_g_map = np.arange(self.ng)
+        self._upper_g_mask = np.ones(self.ng, dtype=bool)
+        self._upper_g_map = np.arange(self.ng)
+
+        self._lower_d_mask = np.zeros(0, dtype=bool)
+        self._lower_d_map = np.zeros(0)
+        self._upper_d_mask = np.zeros(0, dtype=bool)
+        self._upper_d_map = np.zeros(0)
+
+        # define bounds on d extracted from g
+        self._lower_d = np.compress(self._d_mask, self._lower_g)
+        self._upper_d = np.compress(self._d_mask, self._upper_g)
+
+        # internal pointer for evaluation of g
+        self._g_rhs = self._upper_g.copy()
+        self._g_rhs[~self._c_mask] = 0.0
+        self._lower_g[self._c_mask] = 0.0
+        self._upper_g[self._c_mask] = 0.0
+
+        # set number of equatity and inequality constraints from maps
+        self._nc = len(self._c_map)
+        self._nd = len(self._d_map)
+
+    @property
+    def num_bounds(self):
+        return self._num_bounds
+
+    def _make_unmutable_caches(self):
+        """
+        Sets writable flag of internal arrays (cached) to false
+        """
+        self._lower_x.flags.writeable = False
+        self._upper_x.flags.writeable = False
+        self._lower_g.flags.writeable = False
+        self._upper_g.flags.writeable = False
+        self._init_x.flags.writeable = False
+        self._init_y.flags.writeable = False
+
+        # make maps and masks not rewritable
+        self._c_mask.flags.writeable = False
+        self._c_map.flags.writeable = False
+        self._d_mask.flags.writeable = False
+        self._d_map.flags.writeable = False
+
+        self._lower_x_mask.flags.writeable = False
+        self._upper_x_mask.flags.writeable = False
+        self._lower_g_mask.flags.writeable = False
+        self._upper_g_mask.flags.writeable = False
+        self._lower_d_mask.flags.writeable = False
+        self._upper_d_mask.flags.writeable = False
+
+        self._lower_x_map.flags.writeable = False
+        self._upper_x_map.flags.writeable = False
+        self._lower_g_map.flags.writeable = False
+        self._upper_g_map.flags.writeable = False
+        self._lower_d_map.flags.writeable = False
+        self._upper_d_map.flags.writeable = False

@@ -14,7 +14,8 @@ from pyomo.contrib.pynumero.sparse import (BlockVector,
                                            BlockSymMatrix,
                                            diagonal_matrix)
 
-from pyomo.contrib.pynumero.examples.algorithms.kkt_solver import FullKKTSolver
+from pyomo.contrib.pynumero.examples.algorithms.kkt_solver import (KKTSolver,
+                                                                   FullKKTSolver)
 
 import math as pymath
 import numpy as np
@@ -269,6 +270,8 @@ class InteriorPointWalker(object):
         val_reg = info['delta_reg']
         if info['status'] != 0:
             raise RuntimeError('Could not solve linear system')
+
+        print(np.linalg.norm(dvars.flatten(), ord=np.inf))
 
         # update step vectors
         dx = -dvars[0]
