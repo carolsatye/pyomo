@@ -45,6 +45,7 @@ results = opt.solve(m, tee=True)
 #################################################################
 nlp = PyomoNLP(m)
 x = nlp.x_init()
+print(x)
 y = compute_init_lam(nlp, x=x)
 
 J = nlp.jacobian_g(x)
@@ -58,17 +59,25 @@ Np = BlockMatrix(2, 1)
 Np[0, 0] = nlp.hessian_lag(x, y, subset_variables_col=[m.eta1, m.eta2])
 Np[1, 0] = nlp.jacobian_g(x, subset_variables=[m.eta1, m.eta2])
 
+print(Np[0,0].toarray())
+print()
+print(Np[1,0].toarray())
+
+print()
+print(nlp.hessian_lag(x, y).toarray())
+print()
+print(nlp.jacobian_g(x).toarray())
 ds = spsolve(M.tocsc(), Np.tocsc())
 print(nlp.variable_order())
 
 #################################################################
 
 p0 = np.array([aml.value(m.nominal_eta1), aml.value(m.nominal_eta2)])
-p = np.array([4.45, 1.05])
+p = np.array([4.5, 1.0])
 dp = p - p0
 dx = ds.dot(dp)[0:nlp.nx]
 new_x = x + dx
-print(new_x)
+print("hola", new_x)
 
 #################################################################
 m = create_model(4.45, 1.05)
